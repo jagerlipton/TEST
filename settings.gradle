@@ -1,1 +1,1 @@
-include ':app', ':designcomporttool'
+include ':app', ':designcomporttool', ':myapplication'
