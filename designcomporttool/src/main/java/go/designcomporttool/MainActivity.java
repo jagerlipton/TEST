@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+
 public class MainActivity extends AppCompatActivity {
     TextView status;
     @Override
@@ -45,10 +46,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String downloadType = SP.getString("comport_bauderate","9600");
-        status = (TextView) findViewById(R.id.textView);
-        status.setText(downloadType);
+        Read_Comport_settings();
+
+
+
+
+       // status = (TextView) findViewById(R.id.textView);
+       // status.setText(Global_data.Gd_comport_baudrate);
     }
+ public void Read_Comport_settings(){
+     String downloadType;
+     SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+     downloadType = SP.getString("comport_bauderate","9600");
+     Global_data.Gd_comport_baudrate=downloadType;
+     downloadType = SP.getString("comport_databit","8");
+     Global_data.Gd_comport_databit=downloadType;
+     downloadType = SP.getString("comport_chet","Нет");
+     Global_data.Gd_comport_chet=downloadType;
+     downloadType = SP.getString("comport_stopbits","1");
+     Global_data.Gd_comport_stopbits=downloadType;
+     downloadType = SP.getString("comport_flowcontrol","Нет");
+     Global_data.Gd_comport_flowcontrol=downloadType;
+    }
+
 
 }

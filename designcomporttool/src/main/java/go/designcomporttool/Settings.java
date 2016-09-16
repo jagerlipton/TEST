@@ -74,6 +74,6 @@ public class Settings extends PreferenceActivity {
                         .getDefaultSharedPreferences(preference.getContext())
                         .getString(preference.getKey(), ""));
     }
-
+//==========
 }
 
