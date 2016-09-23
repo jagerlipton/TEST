@@ -55,4 +55,17 @@
         android:summary="Нет"/>
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/dir_path"
+        android:key="pref_comport_settings"  >
+        <PreferenceScreen
+            android:title="@string/dir_path"
+            android:summary="111">
+            <intent android:action=".activities.opendir">
+            <extra android:name="EXTRA_KEY" android:value="fromSettings"/>
+            </intent>
+
+
+        </PreferenceScreen>
+    </PreferenceCategory>
 </PreferenceScreen>

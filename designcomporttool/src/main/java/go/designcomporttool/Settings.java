@@ -1,19 +1,19 @@
 package go.designcomporttool;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
-
-
-
+import android.widget.TextView;
 
 
 public class Settings extends PreferenceActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +25,7 @@ public class Settings extends PreferenceActivity {
 
     public static class MyPreferenceFragment extends PreferenceFragment
     {
+
         @Override
         public void onCreate(final Bundle savedInstanceState)
         {
@@ -36,8 +37,10 @@ public class Settings extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("comport_stopbits"));
             bindPreferenceSummaryToValue(findPreference("comport_flowcontrol"));
 
-        }
+            }
+
     }
+
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
 
         private String TAG = Settings.class.getSimpleName();
@@ -75,5 +78,18 @@ public class Settings extends PreferenceActivity {
                         .getString(preference.getKey(), ""));
     }
 //==========
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (data == null) {return;}
+        String url = data.getStringExtra("url");
+     //   status = (TextView) findViewById(R.id.textView);
+        // status.setText(url);
+        //    if data.getStringExtra("EXTRA_KEY");
+     //   status.setText(data.getStringExtra("EXTRA_KEY"));
+        // WriteFile_from_listview(url);
+        Log.d("FUCK", url);
+    }
+    //========================
 }
 

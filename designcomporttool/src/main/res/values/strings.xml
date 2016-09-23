@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">111</string>
+    <string name="open_back">Назад</string>
+    <string name="open_go">Го</string>
+    <string name="dir_path">Путь сохранения логов</string>
+    <string name="pref_comport">Настройки COM порта</string>
+
 </resources>

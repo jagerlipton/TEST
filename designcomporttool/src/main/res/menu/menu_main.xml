@@ -8,6 +8,26 @@
         android:orderInCategory="100"
         android:title="Settings"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_saveas"
+        android:orderInCategory="100"
+        android:title="saveas"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_writephone"
+        android:orderInCategory="100"
+        android:title="write phone"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_readsd"
+        android:orderInCategory="100"
+        android:title="read sd"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_readphone"
+        android:orderInCategory="100"
+        android:title="reaphone"
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_exit"
