@@ -18,12 +18,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Settings" />
-        <activity android:name=".opendir">
-            <intent-filter>
-                <action android:name=".activities.opendir" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".opendir"/>
+
     </application>
 
 </manifest>

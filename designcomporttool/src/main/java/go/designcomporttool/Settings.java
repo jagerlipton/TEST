@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 
 public class Settings extends PreferenceActivity {
-
+    final String LOG_TAG = "myLogs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +24,7 @@ public class Settings extends PreferenceActivity {
 
 
     public static class MyPreferenceFragment extends PreferenceFragment
+
     {
 
         @Override
@@ -37,6 +38,17 @@ public class Settings extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("comport_stopbits"));
             bindPreferenceSummaryToValue(findPreference("comport_flowcontrol"));
 
+            findPreference("pref_directory_path").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+
+                    Intent intent = new Intent(getActivity(), opendir.class);
+                    intent.putExtra("EXTRA_KEY", "fromSettingsForm");
+                        startActivityForResult(intent, 1);
+
+                    return false;
+                }
+            });
             }
 
     }
@@ -79,16 +91,17 @@ public class Settings extends PreferenceActivity {
     }
 //==========
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+    super.onActivityResult(requestCode, resultCode, data);
+
         if (data == null) {return;}
         String url = data.getStringExtra("url");
-     //   status = (TextView) findViewById(R.id.textView);
-        // status.setText(url);
+     //  status = (TextView) findViewById(R.id.textView);
+      // status.setText(url);
         //    if data.getStringExtra("EXTRA_KEY");
-     //   status.setText(data.getStringExtra("EXTRA_KEY"));
+      //  status.setText(data.getStringExtra("EXTRA_KEY"));
         // WriteFile_from_listview(url);
-        Log.d("FUCK", url);
+        Log.d(LOG_TAG, "hgfhgfhfghfgthfghgfhgf");
     }
     //========================
 }
