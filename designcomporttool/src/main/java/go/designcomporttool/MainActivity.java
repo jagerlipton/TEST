@@ -26,14 +26,11 @@ import android.util.Log;
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
+
 public class MainActivity extends AppCompatActivity {
     TextView status;
     final String LOG_TAG = "myLogs";
 
-    final String FILENAME = "file";
-
-    final String DIR_SD = "MyFiles";
-    final String FILENAME_SD = "fileSD";
     final ArrayList<String> logstrings = new ArrayList<String>();
     static final SimpleDateFormat DATA_FORMAT = new SimpleDateFormat("dd_MM_yyyy");
     static final String LOG_EXTENTION = ".txt";
@@ -76,7 +73,11 @@ public class MainActivity extends AppCompatActivity {
                 WriteFile_from_listview(Global_data.Gd_Directory_path);
                 return true;
             case R.id.action_readfile:
-                readfile();
+             openFileDialog();
+
+                return true;
+            case R.id.action_read:
+                //uuu
                 return true;
                     default:
                 return super.onOptionsItemSelected(item);
@@ -127,8 +128,20 @@ public class MainActivity extends AppCompatActivity {
     public void writephone() {
      //gg
     }
-    public void readsd() {
-        //==
+
+    public void openFileDialog() {
+
+        FileChooser filechooser = new FileChooser(this);
+        filechooser.setFileListener(new FileChooser.FileSelectedListener() {
+            @Override
+            public void fileSelected(final File file) {
+                String filename = file.getAbsolutePath();
+                Log.d(LOG_TAG, "Открыть файл для чтения: " + filename);
+                readfile(filename);
+                         }
+        });
+        filechooser.setExtension("txt");
+        filechooser.showDialog();
     }
 
 
@@ -197,38 +210,30 @@ public class MainActivity extends AppCompatActivity {
     }
     //========================================================================
 
-    void readfile() {
-        // проверяем доступность SD
+    void readfile(String filename) {
+
         if (!Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
             Log.d(LOG_TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
             return;
         }
-        // получаем путь к SD
-        File sdPath = Environment.getExternalStorageDirectory();
-        // добавляем свой каталог к пути
-        sdPath = new File(sdPath.getAbsolutePath() + "/" + DIR_SD);
-        // формируем объект File, который содержит путь к файлу
-        File sdFile = new File(sdPath, FILENAME_SD);
+
+        File sdFile = new File(filename);
         try {
-            // открываем поток для чтения
+
             BufferedReader br = new BufferedReader(new FileReader(sdFile));
             String str = "";
-            // читаем содержимое
+
 
             ListView list = (ListView) findViewById(R.id.listView);
                      ArrayAdapter<String> adapter = new    ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, logstrings);
                      list.setAdapter(adapter);
-
+logstrings.clear();
             while ((str = br.readLine()) != null) {
-
-                Log.d(LOG_TAG, str);
-                logstrings.add(str);
-
+                       logstrings.add(str);
                 adapter.notifyDataSetChanged();
             }
-            str=Integer.toString(adapter.getCount());
-            Log.d(LOG_TAG, str); ;
+
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

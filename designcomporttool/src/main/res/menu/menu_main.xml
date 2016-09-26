@@ -31,9 +31,9 @@
         android:title="@string/readfile"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/action_readfile"
+        android:id="@+id/action_read"
         android:orderInCategory="100"
-        android:title="readfile"
+        android:title="read"
         app:showAsAction="never"/>
 
     <item
