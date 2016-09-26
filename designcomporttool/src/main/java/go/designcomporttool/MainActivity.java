@@ -1,5 +1,6 @@
 package go.designcomporttool;
 
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,22 +14,17 @@ import android.widget.TextView;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-import android.app.Activity;
-import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.View;
+import net.rdrei.android.dirchooser.DirectoryChooserActivity;
+import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
 public class MainActivity extends AppCompatActivity {
     TextView status;
@@ -41,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
     final ArrayList<String> logstrings = new ArrayList<String>();
     static final SimpleDateFormat DATA_FORMAT = new SimpleDateFormat("dd_MM_yyyy");
     static final String LOG_EXTENTION = ".txt";
-
+    private static final int REQUEST_DIRECTORY = 0;
+    private static final String TAG = "DirChooserSample";
 
 
 
@@ -49,13 +46,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.menu_main, menu);
              return true;
     }
@@ -65,26 +59,26 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_settings:
+            case R.id.action_settings_comport:
                 Intent intent = new Intent(MainActivity.this, Settings.class);
                 startActivity(intent);
                 return true;
             case R.id.action_exit:
                 this.finish();
                 return true;
+            case R.id.action_settings_directory_path:
+              Start_chooser_dialog("settings_directory_path");
+                return true;
             case R.id.action_saveas:
-                saveas();
+                Start_chooser_dialog("saveas");
+                     return true;
+            case R.id.action_save:
+                WriteFile_from_listview(Global_data.Gd_Directory_path);
                 return true;
-            case R.id.action_writephone:
-                writeFileSD();
+            case R.id.action_readfile:
+                readfile();
                 return true;
-            case R.id.action_readsd:
-                readFileSD();
-                return true;
-            case R.id.action_readphone:
-                readphone();
-                return true;
-                   default:
+                    default:
                 return super.onOptionsItemSelected(item);
         }
     }
@@ -93,12 +87,23 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         Read_Comport_settings();
 
-
-
-
-       // status = (TextView) findViewById(R.id.textView);
-       // status.setText(Global_data.Gd_comport_baudrate);
     }
+  public void Start_chooser_dialog(String extra)
+  {
+      final Intent chooserIntent = new Intent(
+              MainActivity.this,
+              DirectoryChooserActivity.class);
+
+      final DirectoryChooserConfig config = DirectoryChooserConfig.builder()
+              .newDirectoryName("Logs")
+              .allowReadOnlyDirectory(true)
+              .allowNewDirectoryNameModification(true)
+              .build();
+      chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config);
+      Global_data.Gd_Intent_data=extra;
+      startActivityForResult(chooserIntent, REQUEST_DIRECTORY);
+        }
+
  public void Read_Comport_settings(){
      String downloadType;
      SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -112,36 +117,44 @@ public class MainActivity extends AppCompatActivity {
      Global_data.Gd_comport_stopbits=downloadType;
      downloadType = SP.getString("comport_flowcontrol","Нет");
      Global_data.Gd_comport_flowcontrol=downloadType;
+     downloadType = SP.getString("pref_directory_path","");
+     Global_data.Gd_Directory_path=downloadType;
+
 
     }
 
-    public void saveas() {
-    //==
-// вызов папкодиалога
-        Intent intent = new Intent(this, opendir.class);
-        intent.putExtra("EXTRA_KEY", "fromMainForm");
-        startActivityForResult(intent, 1);
 
-    }
     public void writephone() {
      //gg
     }
     public void readsd() {
         //==
     }
-    public void readphone() {
 
-    }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if (data == null) {return;}
-        String url = data.getStringExtra("url");
-        status = (TextView) findViewById(R.id.textView);
-       // status.setText(url);
-    //    if data.getStringExtra("EXTRA_KEY");
-        status.setText(data.getStringExtra("EXTRA_KEY"));
-       // WriteFile_from_listview(url);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (data == null) {
+            return;
+        }
+
+        if (requestCode == REQUEST_DIRECTORY) {
+            Log.i(TAG, String.format("Return from DirChooser with result %d",  resultCode));
+            status = (TextView) findViewById(R.id.textView);
+            if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
+                if (Global_data.Gd_Intent_data == "settings_directory_path") {
+                    Global_data.Gd_Directory_path=data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("pref_directory_path",data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
+                    editor.commit();
+                }
+                if (Global_data.Gd_Intent_data == "saveas") {
+                    WriteFile_from_listview(data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
+                }
+            }
+        }
     }
     //========================
 
@@ -183,39 +196,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
     //========================================================================
-    void writeFileSD() {
-        // проверяем доступность SD
-        if (!Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED)) {
-            Log.d(LOG_TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
-            return;
-        }
-        // получаем путь к SD
-        File sdPath = Environment.getExternalStorageDirectory();
-        // добавляем свой каталог к пути
-        sdPath = new File(sdPath.getAbsolutePath() + "/" + DIR_SD);
-        Log.d(LOG_TAG, sdPath.getAbsolutePath() + "/" + DIR_SD);
-        // создаем каталог
-        sdPath.mkdirs();
-        // формируем объект File, который содержит путь к файлу
-        File sdFile = new File(sdPath, FILENAME_SD);
-        try {
-            // открываем поток для записи
-            BufferedWriter bw = new BufferedWriter(new FileWriter(sdFile));
-            // пишем данные
-            bw.write("ggdhgfhgfhfghgfhgfhgfdhfhddfghgfhgfh");
-           bw.newLine();
-            bw.write("867876867876867876876");
 
-            // закрываем поток
-            bw.close();
-            Log.d(LOG_TAG, "Файл записан на SD: " + sdFile.getAbsolutePath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void readFileSD() {
+    void readfile() {
         // проверяем доступность SD
         if (!Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {

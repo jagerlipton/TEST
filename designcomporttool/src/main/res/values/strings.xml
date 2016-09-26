@@ -4,5 +4,10 @@
     <string name="open_go">Го</string>
     <string name="dir_path">Путь сохранения логов</string>
     <string name="pref_comport">Настройки COM порта</string>
-
+    <string name="settings_directory_path">Настройки пути сохранения логов...</string>
+    <string name="settings_comport">Настройки COM порта...</string>
+    <string name="saveas">Сохранить лог как...</string>
+    <string name="save">Сохранить лог</string>
+    <string name="exit">Выйти из программы</string>
+    <string name="readfile">Открыть логфайл</string>
 </resources>

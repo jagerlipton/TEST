@@ -55,13 +55,5 @@
         android:summary="Нет"/>
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/dir_path">
 
-        <Preference
-            android:title="@string/dir_path"
-            android:summary="111"
-            android:key="pref_directory_path"  >
-                </Preference>
-    </PreferenceCategory>
 </PreferenceScreen>

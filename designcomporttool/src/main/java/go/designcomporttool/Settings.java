@@ -1,15 +1,13 @@
 package go.designcomporttool;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.TextView;
+
 
 
 public class Settings extends PreferenceActivity {
@@ -38,17 +36,6 @@ public class Settings extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("comport_stopbits"));
             bindPreferenceSummaryToValue(findPreference("comport_flowcontrol"));
 
-            findPreference("pref_directory_path").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-
-                    Intent intent = new Intent(getActivity(), opendir.class);
-                    intent.putExtra("EXTRA_KEY", "fromSettingsForm");
-                        startActivityForResult(intent, 1);
-
-                    return false;
-                }
-            });
             }
 
     }
@@ -91,18 +78,7 @@ public class Settings extends PreferenceActivity {
     }
 //==========
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-    super.onActivityResult(requestCode, resultCode, data);
 
-        if (data == null) {return;}
-        String url = data.getStringExtra("url");
-     //  status = (TextView) findViewById(R.id.textView);
-      // status.setText(url);
-        //    if data.getStringExtra("EXTRA_KEY");
-      //  status.setText(data.getStringExtra("EXTRA_KEY"));
-        // WriteFile_from_listview(url);
-        Log.d(LOG_TAG, "hgfhgfhfghfgthfghgfhgf");
-    }
     //========================
 }
 
