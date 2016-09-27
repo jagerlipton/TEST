@@ -64,13 +64,17 @@
 
     <string name="pref_comport_flowcontrol">Управление потоком</string>
     <string-array name="pref_comport_flowcontrol_titles">
-        <item>Xon/Xoff</item>
-        <item>Аппаратное</item>
+        <item>Xon/Xoff In</item>
+        <item>Xon/Xoff Out</item>
+        <item>RTS/CTS In</item>
+        <item>RTS/CTS Out</item>
         <item>Нет</item>
     </string-array>
     <string-array name="pref_comport_flowcontrol_values">
-        <item>Xon/Xoff</item>
-        <item>Аппаратное</item>
+        <item>Xon/Xoff In</item>
+        <item>Xon/Xoff Out</item>
+        <item>RTS/CTS In</item>
+        <item>RTS/CTS Out</item>
         <item>Нет</item>
     </string-array>
 

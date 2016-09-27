@@ -1,1 +1,1 @@
-include ':app', ':designcomporttool', ':myapplication'
+include ':designcomporttool', ':usbSerialForAndroid'

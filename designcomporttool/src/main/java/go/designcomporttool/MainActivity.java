@@ -1,13 +1,17 @@
 package go.designcomporttool;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,8 +25,15 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import android.os.Environment;
 import android.util.Log;
+
+import com.hoho.android.usbserial.driver.UsbSerialDriver;
+import com.hoho.android.usbserial.driver.UsbSerialPort;
+import com.hoho.android.usbserial.driver.UsbSerialProber;
+
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
@@ -77,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
             case R.id.action_read:
-                //uuu
+                azaza();
                 return true;
                     default:
                 return super.onOptionsItemSelected(item);
@@ -121,6 +132,37 @@ public class MainActivity extends AppCompatActivity {
      downloadType = SP.getString("pref_directory_path","");
      Global_data.Gd_Directory_path=downloadType;
 
+     Global_data.Gd_BAUDRATE=Integer.parseInt(Global_data.Gd_comport_baudrate);
+     Global_data.Gd_DATABITS=Integer.parseInt(Global_data.Gd_comport_databit);
+
+     switch(Global_data.Gd_comport_stopbits) {
+         case "1":
+             Global_data.Gd_STOPBITS=1;
+             break;
+         case "1,5":
+             Global_data.Gd_STOPBITS=3;
+             break;
+         case  "2":
+             Global_data.Gd_STOPBITS=2;
+             break;
+              }
+     switch(Global_data.Gd_comport_flowcontrol) {
+         case "Xon/Xoff In":
+             Global_data.Gd_FLOWCONTROL=4;
+             break;
+         case "Xon/Xoff Out":
+             Global_data.Gd_FLOWCONTROL=8;
+             break;
+         case  "RTS/CTS In":
+             Global_data.Gd_FLOWCONTROL=1;
+             break;
+         case  "RTS/CTS Out":
+             Global_data.Gd_FLOWCONTROL=2;
+             break;
+         case  "Нет":
+             Global_data.Gd_FLOWCONTROL=0;
+             break;
+     }
 
     }
 
@@ -241,6 +283,65 @@ logstrings.clear();
             e.printStackTrace();
         }
     }
+    public   void azaza()  {
+        UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
+        List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
+        if (availableDrivers.isEmpty()) {
+            return;
+        }
 
+// Open a connection to the first available driver.
+        UsbSerialDriver driver = availableDrivers.get(0);
+        UsbDeviceConnection connection = manager.openDevice(driver.getDevice());
+        if (connection == null) {
+            // You probably need to call UsbManager.requestPermission(driver.getDevice(), ..)
+            return;
+        }
+
+// Read some data! Most have just one port (port 0).
+        UsbSerialPort port = driver.getPorts().get(0);
+        try {
+            port.open(connection);
+           port.setParameters(Global_data.Gd_BAUDRATE, Global_data.Gd_DATABITS, Global_data.Gd_STOPBITS, Global_data.Gd_PARITY);
+
+            byte buffer[] = new byte[16];
+            int numBytesRead = port.read(buffer, 1000);
+            //  Log.d(TAG, "Read " + numBytesRead + " bytes.");
+        } catch (IOException e) {
+            // Deal with error.
+        } finally {
+            try {
+                port.close();
+            } catch(IOException ex) {
+                ex.printStackTrace();
+            }
+
+        }
+
+    }
+
+    public void connect_click (View v){
+        UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
+        List<UsbSerialDriver> availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager);
+               if (availableDrivers.isEmpty()) {
+                   status = (TextView) findViewById(R.id.textView2);
+                   status.setText("Портов не найдено");
+                   Log.d(LOG_TAG, "Портов не найдено");
+            return;
+        }
+   //  status = (TextView) findViewById(R.id.textView2);
+     //   status.setText("Connected");
+        Log.d(LOG_TAG, "Обнаружен порт");
+
+        UsbSerialDriver driver = availableDrivers.get(0);
+        UsbDeviceConnection connection = manager.openDevice(driver.getDevice());
+        if (connection == null) {
+             status = (TextView) findViewById(R.id.textView2);
+             status.setText("Connected");
+            Log.d(LOG_TAG, "Connected");
+            return;
+        }
+
+    }
 }
 
